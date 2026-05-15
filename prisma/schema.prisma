@@ -1,0 +1,392 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String          @id @default(cuid())
+  name            String?
+  email           String          @unique
+  phone           String?
+  image           String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  savedSearches   SavedSearch[]
+  favoritedDeals  FavoritedDeal[]
+  dealAlerts      DealAlert[]
+  campaigns       OfferCampaign[]
+  uploadedOffers  UploadedOffer[]
+}
+
+model Vehicle {
+  id             String            @id @default(cuid())
+  year           Int
+  make           String
+  model          String
+  trim           String
+  bodyStyle      String?
+  fuelType       String?
+  powertrain     String?
+  isEV           Boolean           @default(false)
+  isHybrid       Boolean           @default(false)
+  imageUrl       String?
+  regionalEligibility Json?
+  manufacturerIncentiveSupport Boolean @default(true)
+  oemProgramSupport Json?
+  msrp           Int
+  createdAt      DateTime          @default(now())
+  manufacturerPromotions ManufacturerPromotion[]
+  promotions     DealerPromotion[]
+  incentives     Incentive[]
+  communityDeals CommunityDeal[]
+  dealScores     DealScore[]
+
+  @@index([make, model, trim, year])
+}
+
+model Dealer {
+  id          String            @id @default(cuid())
+  name        String
+  city        String
+  state       String
+  zipCode     String
+  phone       String?
+  email       String?
+  website     String?
+  fees        Int               @default(0)
+  promotions  DealerPromotion[]
+  campaignDealers OfferCampaignDealer[]
+  messages    DealerMessage[]
+
+  @@index([state, city])
+}
+
+model DealerPromotion {
+  id             String      @id @default(cuid())
+  vehicleId      String
+  dealerId       String
+  manufacturerPromotionId String?
+  type           DealType
+  monthlyPayment Int?
+  dueAtSigning   Int?
+  term           Int?
+  mileage        Int?
+  apr            Float?
+  moneyFactor    Float?
+  msrp           Int
+  sellingPrice   Int
+  incentives     Int         @default(0)
+  dealerDiscount Int         @default(0)
+  dealerFees     Int         @default(0)
+  brokerFee      Int         @default(0)
+  creditTier     String?
+  evTaxCredit    Boolean     @default(false)
+  sourceUrl      String?
+  advertisedSourceUrl String?
+  sourceName     String?
+  freshnessScore Int         @default(70)
+  confidence     Int         @default(70)
+  expiresAt      DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  vehicle        Vehicle     @relation(fields: [vehicleId], references: [id])
+  dealer         Dealer      @relation(fields: [dealerId], references: [id])
+  manufacturerPromotion ManufacturerPromotion? @relation(fields: [manufacturerPromotionId], references: [id])
+  dealScore      DealScore?
+  benchmarkComparison BenchmarkComparison?
+  favoritedDeals FavoritedDeal[]
+}
+
+model ManufacturerPromotion {
+  id             String      @id @default(cuid())
+  vehicleId      String
+  programName    String
+  make           String
+  region         String
+  type           DealType
+  monthlyPayment Int?
+  dueAtSigning   Int?
+  term           Int?
+  mileage        Int?
+  apr            Float?
+  moneyFactor    Float?
+  msrp           Int
+  sellingPrice   Int?
+  incentives     Int         @default(0)
+  dealerDiscount Int         @default(0)
+  evTaxCredit    Boolean     @default(false)
+  loyaltyCash    Int         @default(0)
+  conquestCash   Int         @default(0)
+  sourceUrl      String?
+  startsAt       DateTime?
+  expiresAt      DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  vehicle        Vehicle     @relation(fields: [vehicleId], references: [id])
+  dealerPromotions DealerPromotion[]
+  benchmarkComparisons BenchmarkComparison[]
+
+  @@index([make, region, type])
+}
+
+model BenchmarkComparison {
+  id                      String      @id @default(cuid())
+  dealerPromotionId       String      @unique
+  manufacturerPromotionId String
+  oemMonthlyPayment       Int?
+  dealerMonthlyPayment    Int?
+  oemAPR                  Float?
+  dealerAPR               Float?
+  oemDueAtSigning         Int?
+  dealerDueAtSigning      Int?
+  oemDealerDiscount       Int         @default(0)
+  dealerDiscount          Int         @default(0)
+  monthlySavings          Int         @default(0)
+  aprImprovement          Float       @default(0)
+  dueAtSigningSavings     Int         @default(0)
+  discountAdvantage       Int         @default(0)
+  benchmarkStatus         BenchmarkStatus
+  effectiveSavings        Int         @default(0)
+  regionRank              Int?
+  createdAt               DateTime    @default(now())
+  dealerPromotion         DealerPromotion @relation(fields: [dealerPromotionId], references: [id])
+  manufacturerPromotion   ManufacturerPromotion @relation(fields: [manufacturerPromotionId], references: [id])
+}
+
+model Incentive {
+  id          String   @id @default(cuid())
+  vehicleId   String
+  name        String
+  amount      Int
+  type        String
+  region      String
+  startsAt    DateTime
+  expiresAt   DateTime
+  creditTier  String?
+  sourceUrl   String?
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+}
+
+model CommunityDeal {
+  id             String       @id @default(cuid())
+  vehicleId      String
+  source         CommunitySource
+  sourceUrl      String?
+  city           String?
+  state          String?
+  msrp           Int?
+  sellingPrice   Int?
+  monthlyPayment Int?
+  dueAtSigning   Int?
+  term           Int?
+  mileage        Int?
+  apr            Float?
+  moneyFactor    Float?
+  sentiment      String?
+  confidence     Int          @default(50)
+  dealDate       DateTime?
+  createdAt      DateTime     @default(now())
+  vehicle        Vehicle      @relation(fields: [vehicleId], references: [id])
+  redditPost     RedditPost?
+  forumPost      ForumPost?
+}
+
+model RedditPost {
+  id              String        @id @default(cuid())
+  communityDealId String       @unique
+  redditId        String       @unique
+  subreddit       String
+  title           String
+  authorHash      String?
+  permalink       String
+  postedAt        DateTime
+  rawJson         Json?
+  communityDeal   CommunityDeal @relation(fields: [communityDealId], references: [id])
+}
+
+model ForumPost {
+  id              String        @id @default(cuid())
+  communityDealId String       @unique
+  forumName       String
+  title           String
+  url             String
+  postedAt        DateTime?
+  importedBy      String?
+  rawHtml         String?
+  communityDeal   CommunityDeal @relation(fields: [communityDealId], references: [id])
+}
+
+model OfferCampaign {
+  id              String                @id @default(cuid())
+  userId          String
+  vehicleSummary  String
+  dealType        DealType
+  targetMonthly   Int?
+  targetDue       Int?
+  targetPrice     Int?
+  targetApr       Float?
+  targetMoneyFactor Float?
+  oemBenchmarkSummary String?
+  targetBenchmarkAdvantage Int?
+  bestCounterMonthly Int?
+  bestOfferVsOem     Int?
+  term            Int?
+  mileage         Int?
+  zipCode         String
+  hasTradeIn      Boolean               @default(false)
+  customMessage   String
+  replyToEmail    String                @unique
+  status          CampaignStatus        @default(DRAFT)
+  createdAt       DateTime              @default(now())
+  user            User                  @relation(fields: [userId], references: [id])
+  dealers         OfferCampaignDealer[]
+  messages        DealerMessage[]
+  uploadedOffers  UploadedOffer[]
+}
+
+model OfferCampaignDealer {
+  id          String          @id @default(cuid())
+  campaignId  String
+  dealerId    String
+  status      DealerCampaignStatus @default(PENDING)
+  sentAt      DateTime?
+  campaign    OfferCampaign   @relation(fields: [campaignId], references: [id])
+  dealer      Dealer          @relation(fields: [dealerId], references: [id])
+
+  @@unique([campaignId, dealerId])
+}
+
+model DealerMessage {
+  id          String        @id @default(cuid())
+  campaignId  String
+  dealerId    String
+  userId      String?
+  direction   MessageDirection
+  subject     String
+  body        String
+  fromEmail   String
+  toEmail     String
+  providerId  String?
+  responseRank Int?
+  oemMonthlyPayment Int?
+  dealerMonthlyPayment Int?
+  benchmarkAdvantage Int?
+  status      String?
+  receivedAt  DateTime?
+  sentAt      DateTime?
+  createdAt   DateTime      @default(now())
+  campaign    OfferCampaign @relation(fields: [campaignId], references: [id])
+  dealer      Dealer        @relation(fields: [dealerId], references: [id])
+}
+
+model SavedSearch {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  filters   Json
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model FavoritedDeal {
+  id                  String   @id @default(cuid())
+  userId              String
+  dealerPromotionId   String
+  benchmarkAdvantage  Int      @default(0)
+  note                String?
+  createdAt           DateTime @default(now())
+  user                User     @relation(fields: [userId], references: [id])
+  dealerPromotion     DealerPromotion @relation(fields: [dealerPromotionId], references: [id])
+
+  @@unique([userId, dealerPromotionId])
+}
+
+model DealAlert {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  filters   Json
+  threshold Json
+  channel   String   @default("email")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model DealScore {
+  id                 String            @id @default(cuid())
+  vehicleId          String
+  dealerPromotionId  String?           @unique
+  score              Int
+  label              String
+  discountComponent  Float
+  paymentComponent   Float
+  rateComponent      Float
+  incentiveComponent Float
+  feePenalty         Float
+  communityComponent Float
+  confidence         Int
+  createdAt          DateTime          @default(now())
+  vehicle            Vehicle           @relation(fields: [vehicleId], references: [id])
+  dealerPromotion    DealerPromotion?  @relation(fields: [dealerPromotionId], references: [id])
+}
+
+model UploadedOffer {
+  id          String        @id @default(cuid())
+  userId      String
+  campaignId  String?
+  fileName    String
+  fileUrl     String
+  parsedJson  Json?
+  createdAt   DateTime      @default(now())
+  user        User          @relation(fields: [userId], references: [id])
+  campaign    OfferCampaign? @relation(fields: [campaignId], references: [id])
+}
+
+enum DealType {
+  Lease
+  Finance
+}
+
+enum BenchmarkStatus {
+  BEATS_OEM
+  MATCHES_OEM
+  WORSE_THAN_OEM
+  EXCEPTIONAL_REGIONAL_DEAL
+}
+
+enum CommunitySource {
+  REDDIT
+  LEASEHACKR
+  CUSTOMER_UPLOAD
+  MANUAL_IMPORT
+  PARTNER_FEED
+  RSS
+}
+
+enum CampaignStatus {
+  DRAFT
+  SENT
+  ACTIVE
+  CLOSED
+  ARCHIVED
+}
+
+enum DealerCampaignStatus {
+  PENDING
+  SENT
+  INTERESTED
+  DECLINED
+  COUNTERED
+  NO_RESPONSE
+  BEST_OFFER
+}
+
+enum MessageDirection {
+  OUTBOUND
+  INBOUND
+}
