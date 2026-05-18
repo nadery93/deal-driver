@@ -1,6 +1,6 @@
 import type { CommunityReport, DealerResponse, DealType, FuelType, ManufacturerPromotion, StateOption, VehicleDeal, VehicleProfile } from "@/lib/types";
 
-export const genericVehicleImage = "https://placehold.co/900x520/e8eef7/09111f?text=New+Vehicle";
+export const genericVehicleImage = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=80";
 
 export const usStates: StateOption[] = [
   ["AL", "Alabama", "South", "Birmingham"],

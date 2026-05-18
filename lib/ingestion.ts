@@ -1,4 +1,11 @@
 import { z } from "zod";
+import {
+  ingestedPromotionBatchSchema,
+  ingestedPromotionSchema,
+  type IngestedPromotion
+} from "@/lib/schemas/ingestedPromotion";
+
+export { ingestedPromotionSchema, ingestedPromotionBatchSchema, type IngestedPromotion };
 
 export const communityDealSchema = z.object({
   source: z.enum(["reddit", "leasehackr", "customer_upload", "rss", "manual_import", "partner_feed"]),
@@ -25,6 +32,46 @@ export type ParsedCommunityDeal = z.infer<typeof communityDealSchema>;
 
 export function normalizeCommunityDeal(input: unknown): ParsedCommunityDeal {
   return communityDealSchema.parse(input);
+}
+
+export function normalizeIngestedPromotion(input: unknown): IngestedPromotion {
+  return ingestedPromotionSchema.parse(input);
+}
+
+export function normalizeIngestedPromotionBatch(input: unknown): IngestedPromotion[] {
+  const payload = input as { promotions?: unknown[] };
+  if (payload && Array.isArray(payload.promotions)) {
+    return ingestedPromotionBatchSchema.parse(input).promotions;
+  }
+  return [normalizeIngestedPromotion(input)];
+}
+
+export function communityDealToIngested(deal: ParsedCommunityDeal): IngestedPromotion | null {
+  if (!deal.make || !deal.model || !deal.trim || !deal.year) return null;
+  if (!deal.monthlyPayment || !deal.term) return null;
+
+  return {
+    sourceKind: "community",
+    year: deal.year,
+    make: deal.make,
+    model: deal.model,
+    trim: deal.trim,
+    state: "CA",
+    type: "Lease",
+    monthlyPayment: deal.monthlyPayment,
+    dueAtSigning: deal.dueAtSigning ?? 0,
+    term: deal.term,
+    mileage: deal.mileage ?? 10000,
+    apr: deal.apr,
+    moneyFactor: deal.moneyFactor,
+    sellingPrice: deal.sellingPrice,
+    incentives: 0,
+    stockPhotoUrl: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=80",
+    source: `Community: ${deal.source}`,
+    sourceUrl: deal.sourceUrl,
+    expiresAt: "2026-06-30",
+    confidence: deal.confidence
+  };
 }
 
 export const ingestionArchitecture = [

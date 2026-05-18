@@ -58,7 +58,7 @@ export function PromotionResults({ state, make, model, trim }: { state: string; 
       </Section>
 
       <Section className="pt-0">
-        <div className="grid gap-5 lg:grid-cols-2">
+        <div className="grid gap-5 sm:grid-cols-1 lg:grid-cols-2">
           {vehicleDeals.map((deal) => <DealCard key={deal.id} deal={deal} />)}
         </div>
       </Section>

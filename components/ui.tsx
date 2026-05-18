@@ -37,7 +37,7 @@ export function Input({ label, ...props }: React.InputHTMLAttributes<HTMLInputEl
       <span className="mb-1 block text-xs font-semibold uppercase text-slate-500">{label}</span>
       <input
         {...props}
-        className="focus-ring w-full rounded-xl border border-line bg-white px-3 py-3 text-sm text-ink shadow-sm placeholder:text-slate-400"
+        className="focus-ring transition-premium w-full rounded-xl border border-line bg-white px-3 py-3 text-sm text-ink shadow-sm placeholder:text-slate-400"
       />
     </label>
   );
@@ -47,11 +47,15 @@ export function Select({ label, children, ...props }: React.SelectHTMLAttributes
   return (
     <label className="block">
       <span className="mb-1 block text-xs font-semibold uppercase text-slate-500">{label}</span>
-      <select {...props} className="focus-ring w-full rounded-xl border border-line bg-white px-3 py-3 text-sm text-ink shadow-sm">
+      <select {...props} className="focus-ring transition-premium w-full rounded-xl border border-line bg-white px-3 py-3 text-sm text-ink shadow-sm">
         {children}
       </select>
     </label>
   );
+}
+
+export function Skeleton({ className }: { className?: string }) {
+  return <div className={cn("animate-pulse rounded-xl border border-line bg-white shadow-soft", className)} aria-hidden="true" />;
 }
 
 export function Disclaimer() {

@@ -84,6 +84,8 @@ export type BenchmarkComparison = {
   regionRank: number;
 };
 
+export type { IngestedPromotion } from "@/lib/schemas/ingestedPromotion";
+
 export type VehicleDeal = VehicleProfile & {
   type: DealType;
   state: string;

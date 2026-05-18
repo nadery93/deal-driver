@@ -2,10 +2,11 @@ import { DealCard } from "@/components/deal-card";
 import { SearchExperience } from "@/components/search-experience";
 import { Nav } from "@/components/nav";
 import { Disclaimer, Section, Stat } from "@/components/ui";
-import { deals } from "@/lib/data";
+import { listPromotions } from "@/lib/promotionStore";
 import { currency } from "@/lib/format";
 
 export default function DealsPage() {
+  const deals = listPromotions();
   const best = deals[0];
   const manufacturerBeaters = deals.filter((deal) => deal.benchmark.benchmarkStatus === "BEATS_OEM" || deal.benchmark.benchmarkStatus === "EXCEPTIONAL_REGIONAL_DEAL").length;
 
@@ -36,7 +37,7 @@ export default function DealsPage() {
             <p className="text-sm font-semibold uppercase text-electric">Fast scan</p>
             <h2 className="mt-2 text-3xl font-semibold text-ink">Top manufacturer-beating promotions</h2>
           </div>
-          <div className="grid gap-5 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-1 lg:grid-cols-2">
             {deals.slice(0, 6).map((deal) => <DealCard key={deal.id} deal={deal} />)}
           </div>
         </Section>

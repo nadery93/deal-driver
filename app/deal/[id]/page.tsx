@@ -3,18 +3,19 @@ import { notFound } from "next/navigation";
 import { ExternalLink, MailPlus, Phone, ShieldCheck, Star } from "lucide-react";
 import { Nav } from "@/components/nav";
 import { Disclaimer, Pill, Section, Stat } from "@/components/ui";
-import { communityReports, deals, manufacturerPromotions } from "@/lib/data";
+import { communityReports, manufacturerPromotions } from "@/lib/data";
+import { getPromotionById, listPromotions } from "@/lib/promotionStore";
 import { currency, signedCurrency } from "@/lib/format";
 import { benchmarkCopy, dealLabel, dealScore, discountPercent, effectiveMonthly, labelTone } from "@/lib/scoring";
 
 export default function DealDetailPage({ params }: { params: { id: string } }) {
-  const deal = deals.find((item) => item.id === params.id);
+  const deal = getPromotionById(params.id);
   if (!deal) notFound();
   const oem = manufacturerPromotions.find((promotion) => promotion.id === deal.oemPromotionId);
   if (!oem) notFound();
   const score = dealScore(deal);
   const reports = communityReports.filter((report) => report.vehicleId === deal.id || report.vehicleId === deal.oemPromotionId.replace("oem-", ""));
-  const similar = deals.filter((item) => item.id !== deal.id && item.make === deal.make).slice(0, 4);
+  const similar = listPromotions({ make: deal.make }).filter((item) => item.id !== deal.id).slice(0, 4);
 
   return (
     <>
@@ -102,7 +103,7 @@ export default function DealDetailPage({ params }: { params: { id: string } }) {
             <h2 className="mt-2 text-3xl font-semibold text-ink">Other offers to use as leverage</h2>
           </div>
           <div className="grid gap-4 lg:grid-cols-4">
-            {(similar.length ? similar : deals.filter((item) => item.id !== deal.id).slice(0, 4)).map((item) => (
+            {(similar.length ? similar : listPromotions().filter((item) => item.id !== deal.id).slice(0, 4)).map((item) => (
               <Link key={item.id} href={`/deal/${item.id}`} className="rounded-xl border border-line bg-white p-4 shadow-soft transition hover:-translate-y-1">
                 <p className="font-semibold text-ink">{item.make} {item.model}</p>
                 <p className="mt-1 text-sm text-slate-500">{item.dealer}</p>
