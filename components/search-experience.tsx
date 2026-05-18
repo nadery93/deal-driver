@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { MapPinned, Search, SlidersHorizontal, Trophy, Zap } from "lucide-react";
 import { DealCard } from "@/components/deal-card";
 import { Input, Select } from "@/components/ui";
@@ -9,7 +10,17 @@ import { deals, majorMakes, usStates, vehicleCatalog } from "@/lib/data";
 import { dealScore } from "@/lib/scoring";
 import { vehicleSlug } from "@/lib/vehicleCatalogService";
 
-export function SearchExperience() {
+function SearchExperienceFallback() {
+  return (
+    <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
+      <div className="h-[520px] animate-pulse rounded-xl border border-line bg-white shadow-soft" />
+      <div className="h-[520px] animate-pulse rounded-xl border border-line bg-white shadow-soft" />
+    </div>
+  );
+}
+
+function SearchExperienceInner() {
+  const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
@@ -19,6 +30,25 @@ export function SearchExperience() {
   const [maxPayment, setMaxPayment] = useState("");
   const [evOnly, setEvOnly] = useState(false);
   const [sort, setSort] = useState("benchmark");
+
+  useEffect(() => {
+    const stateParam = searchParams.get("state")?.toUpperCase();
+    const makeParam = searchParams.get("make");
+    const modelParam = searchParams.get("model");
+
+    if (stateParam && usStates.some((item) => item.code === stateParam)) {
+      setState(stateParam);
+    }
+    if (makeParam && majorMakes.includes(makeParam)) {
+      setMake(makeParam);
+      setModel("");
+      setTrim("");
+    }
+    if (modelParam) {
+      setModel(modelParam);
+      setTrim("");
+    }
+  }, [searchParams]);
 
   const models = useMemo(() => Array.from(new Set(vehicleCatalog.filter((vehicle) => !make || vehicle.make === make).map((vehicle) => vehicle.model))).sort(), [make]);
   const trims = useMemo(() => Array.from(new Set(vehicleCatalog.filter((vehicle) => (!make || vehicle.make === make) && (!model || vehicle.model === model)).map((vehicle) => vehicle.trim))).sort(), [make, model]);
@@ -165,5 +195,13 @@ export function SearchExperience() {
         ) : null}
       </div>
     </div>
+  );
+}
+
+export function SearchExperience() {
+  return (
+    <Suspense fallback={<SearchExperienceFallback />}>
+      <SearchExperienceInner />
+    </Suspense>
   );
 }
