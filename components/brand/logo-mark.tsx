@@ -1,6 +1,13 @@
 import { cn } from "@/components/ui";
-
-const GRADIENT_ID = "dealDriverApexGrad";
+import {
+  LOGO_FORE_TRACK,
+  LOGO_GRADIENT_ID,
+  LOGO_GRADIENT_STOPS,
+  LOGO_REAR_OPACITY,
+  LOGO_REAR_TRACK,
+  LOGO_STROKE_WIDTH,
+  LOGO_VIEWBOX
+} from "@/lib/brand/logo-mark-def";
 
 type LogoMarkProps = {
   className?: string;
@@ -10,39 +17,31 @@ export function LogoMark({ className }: LogoMarkProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
+      viewBox={LOGO_VIEWBOX}
       fill="none"
       aria-hidden
-      className={cn("h-6 w-6 shrink-0", className)}
+      className={cn("h-5 w-5 shrink-0", className)}
     >
       <defs>
-        <linearGradient id={GRADIENT_ID} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#22d3ee" />
-          <stop offset="100%" stopColor="#3b82f6" />
+        <linearGradient id={LOGO_GRADIENT_ID} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={LOGO_GRADIENT_STOPS.from} />
+          <stop offset="100%" stopColor={LOGO_GRADIENT_STOPS.to} />
         </linearGradient>
       </defs>
       <path
-        d="M5 4v16"
-        stroke={`url(#${GRADIENT_ID})`}
-        strokeWidth="1.75"
-        strokeLinecap="square"
-        vectorEffect="non-scaling-stroke"
+        d={LOGO_REAR_TRACK}
+        stroke={`url(#${LOGO_GRADIENT_ID})`}
+        strokeWidth={LOGO_STROKE_WIDTH}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeOpacity={LOGO_REAR_OPACITY}
       />
       <path
-        d="M5 5.5 13.5 12 5 18.5"
-        stroke={`url(#${GRADIENT_ID})`}
-        strokeWidth="1.75"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-        vectorEffect="non-scaling-stroke"
-      />
-      <path
-        d="M8.5 8 14 12 8.5 16"
-        stroke={`url(#${GRADIENT_ID})`}
-        strokeWidth="1.75"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-        vectorEffect="non-scaling-stroke"
+        d={LOGO_FORE_TRACK}
+        stroke={`url(#${LOGO_GRADIENT_ID})`}
+        strokeWidth={LOGO_STROKE_WIDTH}
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

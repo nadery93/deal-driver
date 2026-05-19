@@ -31,7 +31,7 @@ export function Nav() {
             aria-label="Deal Driver home"
             className="flex shrink-0 items-center gap-2.5 text-base"
           >
-            <LogoMark className="h-6 w-6" />
+            <LogoMark className="h-5 w-5" />
             <span className="hidden font-bold tracking-wide text-white sm:inline">Deal Driver</span>
           </Link>
           <nav className="flex min-w-0 flex-1 items-center justify-center gap-0.5 overflow-x-auto px-1 [-ms-overflow-style:none] [scrollbar-width:none] md:justify-center [&::-webkit-scrollbar]:hidden">
