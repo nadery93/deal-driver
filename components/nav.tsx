@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Gauge, ShieldCheck, User } from "lucide-react";
+import { ShieldCheck, User } from "lucide-react";
+import { LogoMark } from "@/components/brand/logo-mark";
 import { cn } from "@/components/ui";
 
 const links = [
@@ -25,11 +26,13 @@ export function Nav() {
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#09111f] text-white shadow-lg shadow-slate-950/10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-3 py-3">
-          <Link href="/" className="flex shrink-0 items-center gap-2 text-base font-semibold">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-electric text-white shadow-glow">
-              <Gauge className="h-5 w-5" />
-            </span>
-            <span className="hidden sm:inline">Deal Driver</span>
+          <Link
+            href="/"
+            aria-label="Deal Driver home"
+            className="flex shrink-0 items-center gap-2.5 text-base"
+          >
+            <LogoMark className="h-6 w-6" />
+            <span className="hidden font-bold tracking-wide text-white sm:inline">Deal Driver</span>
           </Link>
           <nav className="flex min-w-0 flex-1 items-center justify-center gap-0.5 overflow-x-auto px-1 [-ms-overflow-style:none] [scrollbar-width:none] md:justify-center [&::-webkit-scrollbar]:hidden">
             {links.map(([label, href]) => (
