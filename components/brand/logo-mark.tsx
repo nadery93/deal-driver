@@ -1,6 +1,16 @@
-import Image from "next/image";
 import { cn } from "@/components/ui";
-import { LOGO_IMAGE_HEIGHT, LOGO_IMAGE_SRC, LOGO_IMAGE_WIDTH } from "@/lib/brand/logo-mark-def";
+import {
+  LOGO_CENTER_CAP,
+  LOGO_CENTER_CHEVRON,
+  LOGO_GRADIENT_ID,
+  LOGO_GRADIENT_STOPS,
+  LOGO_RIM,
+  LOGO_SPOKE_BOTTOM,
+  LOGO_SPOKE_LEFT,
+  LOGO_SPOKE_RIGHT,
+  LOGO_STROKE_WIDTH,
+  LOGO_VIEWBOX
+} from "@/lib/brand/logo-mark-def";
 
 type LogoMarkProps = {
   className?: string;
@@ -8,21 +18,72 @@ type LogoMarkProps = {
   style?: React.CSSProperties;
 };
 
+const strokeProps = {
+  fill: "none" as const,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const
+};
+
 export function LogoMark({ className, glow, style }: LogoMarkProps) {
+  const gradientStroke = `url(#${LOGO_GRADIENT_ID})`;
+
   return (
-    <Image
-      src={LOGO_IMAGE_SRC}
-      alt=""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={LOGO_VIEWBOX}
+      fill="none"
       aria-hidden
-      width={LOGO_IMAGE_WIDTH}
-      height={LOGO_IMAGE_HEIGHT}
       style={style}
       className={cn(
-        "h-6 w-6 shrink-0 object-contain",
+        "h-6 w-6 shrink-0",
         glow && "drop-shadow-[0_0_8px_rgba(56,189,248,0.3)]",
         className
       )}
-      priority
-    />
+    >
+      <defs>
+        <linearGradient id={LOGO_GRADIENT_ID} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={LOGO_GRADIENT_STOPS.from} />
+          <stop offset="100%" stopColor={LOGO_GRADIENT_STOPS.to} />
+        </linearGradient>
+      </defs>
+      <path
+        d={LOGO_RIM}
+        stroke={gradientStroke}
+        strokeWidth={LOGO_STROKE_WIDTH}
+        {...strokeProps}
+      />
+      <path
+        d={LOGO_SPOKE_LEFT}
+        stroke={gradientStroke}
+        strokeWidth={LOGO_STROKE_WIDTH}
+        {...strokeProps}
+      />
+      <path
+        d={LOGO_SPOKE_RIGHT}
+        stroke={gradientStroke}
+        strokeWidth={LOGO_STROKE_WIDTH}
+        {...strokeProps}
+      />
+      <path
+        d={LOGO_SPOKE_BOTTOM}
+        stroke={gradientStroke}
+        strokeWidth={LOGO_STROKE_WIDTH}
+        {...strokeProps}
+      />
+      <path
+        d={LOGO_CENTER_CAP}
+        stroke={gradientStroke}
+        strokeWidth={LOGO_STROKE_WIDTH}
+        {...strokeProps}
+      />
+      <path
+        d={LOGO_CENTER_CHEVRON}
+        stroke={gradientStroke}
+        strokeWidth={LOGO_STROKE_WIDTH}
+        strokeLinejoin="miter"
+        strokeLinecap="round"
+        fill="none"
+      />
+    </svg>
   );
 }
