@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShieldCheck, User } from "lucide-react";
-import { LogoMark } from "@/components/brand/logo-mark";
+import { Logo } from "@/components/brand/logo";
 import { cn } from "@/components/ui";
 
 const links = [
@@ -31,8 +31,7 @@ export function Nav() {
             aria-label="Deal Driver home"
             className="flex shrink-0 items-center gap-3 text-base"
           >
-            <LogoMark className="h-6 w-6" />
-            <span className="hidden font-bold tracking-wide text-white sm:inline">Deal Driver</span>
+            <Logo showText size="md" glow iconClassName="text-sky-400" />
           </Link>
           <nav className="flex min-w-0 flex-1 items-center justify-center gap-0.5 overflow-x-auto px-1 [-ms-overflow-style:none] [scrollbar-width:none] md:justify-center [&::-webkit-scrollbar]:hidden">
             {links.map(([label, href]) => (

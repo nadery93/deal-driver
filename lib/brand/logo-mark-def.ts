@@ -1,25 +1,19 @@
 /** Canonical geometry for LogoMark and app/icon.svg — keep both in sync. */
 
-export const LOGO_VIEWBOX = "0 0 24 24";
+export const LOGO_VIEWBOX = "0 0 100 100";
 
-export const LOGO_GRADIENT_ID = "dealDriverWheelGrad";
+export const LOGO_WHEEL =
+  "M 50,10 A 40,40 0 1,0 85,32 L 74,40 A 26,26 0 1,1 50,24 C 55,24 59,25 63,27 L 70,16 C 64,12 57,10 50,10 Z";
 
-export const LOGO_GRADIENT_STOPS = {
-  from: "#22d3ee",
-  to: "#3b82f6"
-} as const;
+export const LOGO_ARROW = "M 62,14 L 92,28 L 68,52 L 68,38 L 48,38 L 48,24 L 62,24 Z";
 
-export const LOGO_STROKE_WIDTH = 2;
+export const LOGO_HUB = "M 50,42 C 54,42 58,45 58,50 C 58,55 54,58 50,58 C 46,58 42,55 42,50 C 42,45 46,42 50,42 Z";
 
-/** Flat-bottom outer rim — arc over the top, flat chord at y=17.5 */
-export const LOGO_RIM = "M 9.31 17.5 A 7.5 7.5 0 1 1 14.69 17.5";
+export const LOGO_SPOKE_LEFT = "M 42,50 L 16,46 L 18,56 L 43,53 Z";
 
-export const LOGO_SPOKE_LEFT = "M 12 10.5 L 4.5 10.5";
+export const LOGO_SPOKE_RIGHT = "M 58,50 L 84,46 L 82,56 L 57,53 Z";
 
-export const LOGO_SPOKE_RIGHT = "M 12 10.5 L 19.5 10.5";
+export const LOGO_SPOKE_BOTTOM = "M 50,58 L 50,88 L 44,86 L 46,58 Z";
 
-export const LOGO_SPOKE_BOTTOM = "M 12 10.5 L 12 17.5";
-
-export const LOGO_CENTER_CAP = "M 14 10.5 A 2 2 0 1 1 10 10.5 A 2 2 0 1 1 14 10.5";
-
-export const LOGO_CENTER_CHEVRON = "M 10.6 9.9 L 12.4 10.5 L 10.6 11.1";
+/** Favicon fill — matches Tailwind sky-400 (#38bdf8). */
+export const LOGO_FAVICON_FILL = "#38bdf8";
