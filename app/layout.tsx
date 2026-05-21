@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Deal Driver | Car Shopping Intelligence",
   description: "Compare statewide new-car lease and finance promotions against manufacturer benchmarks.",
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }]
+    icon: [{ url: "/icon.png", type: "image/png" }]
   }
 };
 

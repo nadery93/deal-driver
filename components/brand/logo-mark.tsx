@@ -1,13 +1,6 @@
+import Image from "next/image";
 import { cn } from "@/components/ui";
-import {
-  LOGO_ARROW,
-  LOGO_HUB,
-  LOGO_SPOKE_BOTTOM,
-  LOGO_SPOKE_LEFT,
-  LOGO_SPOKE_RIGHT,
-  LOGO_VIEWBOX,
-  LOGO_WHEEL
-} from "@/lib/brand/logo-mark-def";
+import { LOGO_IMAGE_HEIGHT, LOGO_IMAGE_SRC, LOGO_IMAGE_WIDTH } from "@/lib/brand/logo-mark-def";
 
 type LogoMarkProps = {
   className?: string;
@@ -15,32 +8,21 @@ type LogoMarkProps = {
   style?: React.CSSProperties;
 };
 
-const paths = [
-  LOGO_WHEEL,
-  LOGO_ARROW,
-  LOGO_HUB,
-  LOGO_SPOKE_LEFT,
-  LOGO_SPOKE_RIGHT,
-  LOGO_SPOKE_BOTTOM
-] as const;
-
 export function LogoMark({ className, glow, style }: LogoMarkProps) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox={LOGO_VIEWBOX}
-      fill="none"
+    <Image
+      src={LOGO_IMAGE_SRC}
+      alt=""
       aria-hidden
+      width={LOGO_IMAGE_WIDTH}
+      height={LOGO_IMAGE_HEIGHT}
       style={style}
       className={cn(
-        "h-6 w-6 shrink-0",
+        "h-6 w-6 shrink-0 object-contain",
         glow && "drop-shadow-[0_0_8px_rgba(56,189,248,0.3)]",
         className
       )}
-    >
-      {paths.map((d) => (
-        <path key={d} d={d} fill="currentColor" />
-      ))}
-    </svg>
+      priority
+    />
   );
 }
