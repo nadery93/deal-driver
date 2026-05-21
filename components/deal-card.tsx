@@ -1,34 +1,55 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, CalendarClock, Heart, MailPlus, MapPin, ShieldCheck } from "lucide-react";
 import { formatDealHeadline, formatDealTerms } from "@/lib/format";
 import { benchmarkCopy, dealLabel, dealScore, labelTone } from "@/lib/scoring";
-import { genericVehicleImage } from "@/lib/data";
-import { resolveVehicleImage } from "@/lib/stockPhotoService";
+import {
+  brandedVehicleFallback,
+  buildModelMediaUrl,
+  resolveVehicleImage
+} from "@/lib/vehicleMediaService";
 import type { VehicleDeal } from "@/lib/types";
 import { Pill } from "@/components/ui";
+
+type ImageFallbackStage = "trim" | "model" | "silhouette";
 
 export function DealCard({ deal }: { deal: VehicleDeal }) {
   const score = dealScore(deal);
   const label = dealLabel(deal);
   const beatsOem = deal.benchmark.benchmarkStatus === "BEATS_OEM" || deal.benchmark.benchmarkStatus === "EXCEPTIONAL_REGIONAL_DEAL";
-  const initialImage = resolveVehicleImage(deal);
-  const [imageSrc, setImageSrc] = useState(initialImage);
+  const trimImage = resolveVehicleImage(deal);
+  const [imageSrc, setImageSrc] = useState(trimImage);
+  const [fallbackStage, setFallbackStage] = useState<ImageFallbackStage>("trim");
+
+  useEffect(() => {
+    setImageSrc(trimImage);
+    setFallbackStage("trim");
+  }, [deal.id, trimImage]);
+
+  function handleImageError() {
+    if (fallbackStage === "trim") {
+      setImageSrc(buildModelMediaUrl(deal));
+      setFallbackStage("model");
+      return;
+    }
+    if (fallbackStage === "model") {
+      setImageSrc(brandedVehicleFallback);
+      setFallbackStage("silhouette");
+    }
+  }
 
   return (
     <article className="overflow-hidden rounded-xl border border-line bg-white shadow-soft transition-premium hover:-translate-y-0.5 hover:shadow-glow">
       <div className="relative aspect-[16/10] bg-[#09111f]">
-        <Image
+        <img
           src={imageSrc}
           alt={formatDealHeadline(deal)}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
           loading="lazy"
-          className="object-cover object-center"
-          onError={() => setImageSrc(deal.fallbackImageUrl || genericVehicleImage)}
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+          onError={handleImageError}
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" aria-hidden="true" />
         <div className="absolute right-3 top-3 rounded-full border border-white/20 bg-black/50 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
